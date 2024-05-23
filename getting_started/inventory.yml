@@ -1,4 +1,4 @@
 myhosts:
   hosts:
-    51.159.188.230:
+    cloudaj.duckdns.org:
       ansible_user: root
