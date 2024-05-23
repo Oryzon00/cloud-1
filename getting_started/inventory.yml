@@ -1,0 +1,4 @@
+myhosts:
+  hosts:
+    51.159.188.230:
+      ansible_user: root
