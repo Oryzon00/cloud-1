@@ -1,7 +1,7 @@
 # Ansible Commands
 
 ```bash
-ansible myhosts -i inventory.yml
+ansible myhosts -i inventory.yaml
 ```
 
 ```bash
@@ -11,9 +11,13 @@ ansible myhosts -i inventory.yml
 ```
 
 ```bash
-ansible-inventory -i inventory.yml
+ansible-inventory -i inventory.yaml
 # options
 --yaml
 --graph
 --list
+```
+
+```bash
+ansible-playbook -i inventory.yaml playbook.yaml
 ```
