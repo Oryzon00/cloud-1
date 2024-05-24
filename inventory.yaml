@@ -1,0 +1,5 @@
+myhosts:
+  hosts:
+    scaleway_host:
+      ansible_host: cloudaj.duckdns.org
+      ansible_user: ubuntu
