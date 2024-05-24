@@ -1,0 +1,73 @@
+- name: Install and set up Docker
+  hosts: myhosts
+  become: True # Activate privilege escalation
+  tags: docker
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+        state: latest # checks if ressources is at latest version
+        update_cache: yes
+    
+    - name: Add Docker's official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present # checks if ressource already exists
+      
+    - name: Set up stable repository for apt
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        # {{ ansible_distribution_release }} -> replace by host ubuntu release
+        state: present
+    
+    - name: Install docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: latest
+        update_cache: yes
+      
+    - name: Add user ubuntu to group docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes # add user to group without removing him from other group
+
+    - name: Install docker-compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+        # v1 vs v2 ?
+        dest: /usr/local/bin/docker-compose
+        mode: 755
+
+- name: Check docker version
+  hosts: myhosts
+  tags: docker_version
+  tasks:
+    - name: Get docker version
+      shell: "docker --version"
+      register: docker_version
+    
+    - name: Output docker version
+      debug:
+        var: docker_version.stdout_lines
+
+- name: Copy docker-compose.yaml to host
+  hosts: myhosts
+  tags: docker_compose
+  tasks:
+    - name: Copy docker-compose.yaml
+      copy:
+      
+
+
+
+    
