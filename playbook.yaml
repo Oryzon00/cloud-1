@@ -48,17 +48,17 @@
         dest: /usr/local/bin/docker-compose
         mode: 755
 
-- name: Check docker version
-  hosts: myhosts
-  tags: docker_version
-  tasks:
-    - name: Get docker version
-      shell: "docker --version"
-      register: docker_version
+# - name: Check docker version
+#   hosts: myhosts
+#   tags: docker_version
+#   tasks:
+#     - name: Get docker version
+#       shell: "docker --version"
+#       register: docker_version
     
-    - name: Output docker version
-      debug:
-        var: docker_version.stdout_lines
+#     - name: Output docker version
+#       debug:
+#         var: docker_version.stdout_lines
 
 - name: Copy docker-compose.yaml to host
   hosts: myhosts
@@ -66,6 +66,11 @@
   tasks:
     - name: Copy docker-compose.yaml
       copy:
+        src: docker-compose.yaml
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: docker
+        mode: "0644"
       
 
 
