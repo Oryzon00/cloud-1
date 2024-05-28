@@ -1,6 +1,6 @@
 - name: Install and set up Docker
   hosts: myhosts
-  become: True # Activate privilege escalation
+  become: True
   tags: docker
   tasks:
 
@@ -12,13 +12,13 @@
           - curl
           - gnupg-agent
           - software-properties-common
-        state: latest # checks if ressources is at latest version
+        state: latest
         update_cache: yes
     
     - name: Add Docker's official GPG key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
-        state: present # checks if ressource already exists
+        state: present 
       
     - name: Set up stable repository for apt
       apt_repository:
@@ -48,17 +48,25 @@
         dest: /usr/local/bin/docker-compose
         mode: 755
 
-# - name: Check docker version
-#   hosts: myhosts
-#   tags: docker_version
-#   tasks:
-#     - name: Get docker version
-#       shell: "docker --version"
-#       register: docker_version
+- name: Check docker version
+  hosts: myhosts
+  tags: docker_version
+  tasks:
+    - name: Get docker version
+      shell: "docker --version"
+      register: docker_version
     
-#     - name: Output docker version
-#       debug:
-#         var: docker_version.stdout_lines
+    - name: Output docker version
+      debug:
+        var: docker_version.stdout_lines
+    
+    - name: Get docker compose version
+      shell: "docker compose version"
+      register: docker_compose_version
+    
+    - name: Output docker version
+      debug:
+        var: docker_compose_version.stdout_lines
 
 - name: Copy docker-compose.yaml to host
   hosts: myhosts
