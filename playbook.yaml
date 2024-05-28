@@ -72,9 +72,9 @@
   hosts: myhosts
   tags: docker_compose
   tasks:
-    - name: Copy docker-compose.yaml
+    - name: Copy requirements folder
       copy:
-        src: docker-compose.yaml
+        src: requirements
         dest: /home/ubuntu
         owner: ubuntu
         group: docker
