@@ -1,7 +1,8 @@
 - name: Install and set up Docker
   hosts: myhosts
   become: True
-  tags: docker
+  tags: set_up
+  # gather_facts: true?
   tasks:
 
     - name: Install dependencies
@@ -40,6 +41,13 @@
         name: ubuntu
         groups: docker
         append: yes # add user to group without removing him from other group
+    
+    - name: Copy requirements folder #Arguments for folder?
+      copy:
+        src: requirements
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: docker
 
 - name: Check docker version
   hosts: myhosts
@@ -61,17 +69,39 @@
       debug:
         var: docker_compose_version.stdout_lines
 
-- name: Copy docker-compose.yaml to host
+- name: Down project
+  gather_facts: false
   hosts: myhosts
-  tags: docker_compose
+  tags: down
   tasks:
-    - name: Copy requirements folder
-      copy:
-        src: requirements
-        dest: /home/ubuntu
-        owner: ubuntu
-        group: docker
-      
+    - name: docker compose down
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/requirements
+        state: absent
+
+- name: Clean project
+  gather_facts: false
+  hosts: myhosts
+  tags: clean
+  tasks:
+  - name: docker compose clean
+    community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/requirements
+        state: absent
+        remove_images: all
+        remove_volumes: true
+        remove_orphans: true
+
+- name: Launch project
+  gather_facts: false
+  hosts: myhosts
+  tags: up
+  tasks:
+    - name: docker compose up
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/requirements
+        build: always
+        state: present
 
 
 
