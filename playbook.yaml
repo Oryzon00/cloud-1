@@ -41,13 +41,6 @@
         groups: docker
         append: yes # add user to group without removing him from other group
 
-    - name: Install docker-compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
-        # v1 vs v2 ?
-        dest: /usr/local/bin/docker-compose
-        mode: 755
-
 - name: Check docker version
   hosts: myhosts
   tags: docker_version
@@ -78,7 +71,6 @@
         dest: /home/ubuntu
         owner: ubuntu
         group: docker
-        mode: "0644"
       
 
 
