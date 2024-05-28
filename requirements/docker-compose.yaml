@@ -1,1 +1,11 @@
-toto
+services:
+
+  website-nginx:
+    image: nginx-image
+    container_name: nginx-container
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: on-failure
