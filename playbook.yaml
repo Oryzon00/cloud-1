@@ -2,7 +2,6 @@
   hosts: myhosts
   become: True
   tags: set_up
-  # gather_facts: true?
   tasks:
 
     - name: Install dependencies
@@ -42,7 +41,7 @@
         groups: docker
         append: yes # add user to group without removing him from other group
     
-    - name: Copy requirements folder #Arguments for folder?
+    - name: Copy requirements folder
       copy:
         src: requirements
         dest: /home/ubuntu
