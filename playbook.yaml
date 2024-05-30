@@ -48,6 +48,24 @@
         owner: ubuntu
         group: docker
 
+- name: Reboot cloud instance
+  hosts: myhosts
+  become: true
+  gather_facts: false
+  tags: reboot
+  tasks:
+    - name: Reboot
+      reboot:
+        msg: "Reboot initiated by ansible"
+      notify: reboot
+  handlers:
+    - name: Relaunch in case of reboot
+      listen: reboot
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/requirements
+        build: always
+        state: present
+
 - name: Check docker version
   hosts: myhosts
   tags: docker_version
@@ -101,7 +119,3 @@
         project_src: /home/ubuntu/requirements
         build: always
         state: present
-
-
-
-    
