@@ -56,7 +56,6 @@
   tasks:
     - name: Reboot
       reboot:
-        msg: "Reboot initiated by ansible"
       notify: reboot
   handlers:
     - name: Relaunch in case of reboot
