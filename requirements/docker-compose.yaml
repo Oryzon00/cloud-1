@@ -20,7 +20,7 @@ services:
       - wordpress_volume:/var/www/wordpress
     networks:
       - cloud-1
-    restart: on-failure
+    restart: unless-stopped
 
   nginx:
     container_name: nginx
@@ -31,7 +31,7 @@ services:
       - cloud-1
     ports:
       - "80:80"
-    restart: on-failure
+    restart: unless-stopped
     # set up nginx.conf to redirec to wordpress
     
 
