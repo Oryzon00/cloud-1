@@ -5,6 +5,8 @@ services:
     env_file: .env
     volumes:
       - mariadb_volume:/var/lib/mysql
+    networks:
+      - cloud-1
     restart: unless-stopped
 
   wordpress:
@@ -14,12 +16,16 @@ services:
     env_file: .env
     volumes:
       - wordpress_volume:/var/www/wordpress
+    networks:
+      - cloud-1
     restart: on-failure
 
   nginx:
     depends_on:
       - wordpress
     image: nginx:1.27-alpine
+    networks:
+      - cloud-1
     ports:
       - "80:80"
     restart: on-failure
@@ -35,6 +41,13 @@ volumes:
   wordpress_volume:
     name: wordpress_data
     driver: local
+
+
+networks:
+
+  cloud-1:
+    name: cloud-1
+    driver: bridge
 
 # version: "3.9"
 
