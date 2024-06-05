@@ -1,5 +1,6 @@
 - name: Install and set up Docker
   hosts: myhosts
+  gather_facts: true
   become: True
   tags: set_up
   tasks:
@@ -9,7 +10,7 @@
         name:
           - apt-transport-https
           - ca-certificates
-          - curl
+          - curl  
           - gnupg-agent
           - software-properties-common
         state: latest
@@ -65,6 +66,7 @@
       reboot:
 
 - name: Check docker version
+  gather_facts: false
   hosts: myhosts
   tags: docker_version
   tasks:
