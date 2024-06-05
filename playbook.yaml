@@ -114,6 +114,12 @@
   hosts: myhosts
   tags: up
   tasks:
+    - name: Copy docker-compose.yaml
+      copy:
+        src: requirements/docker-compose.yaml
+        dest: /home/ubuntu/requirements
+        owner: ubuntu
+        group: docker
     - name: docker compose up
       community.docker.docker_compose_v2:
         project_src: /home/ubuntu/requirements
