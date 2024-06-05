@@ -27,6 +27,8 @@ services:
     depends_on:
       - wordpress
     image: nginx:1.27-alpine
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
     networks:
       - cloud-1
     ports:
