@@ -1,6 +1,7 @@
 services:
 
   mariadb:
+    container_name: mariaDB
     image: mariadb:11.4
     env_file: .env
     volumes:
@@ -10,6 +11,7 @@ services:
     restart: unless-stopped
 
   wordpress:
+    container_name: wordpress
     depends_on:
       - mariadb
     image: wordpress:6.5
@@ -21,6 +23,7 @@ services:
     restart: on-failure
 
   nginx:
+    container_name: nginx
     depends_on:
       - wordpress
     image: nginx:1.27-alpine
