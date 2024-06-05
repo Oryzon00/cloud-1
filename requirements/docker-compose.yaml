@@ -1,11 +1,121 @@
 services:
 
-  website-nginx:
-    image: nginx-image
-    container_name: nginx-container
-    build:
-      context: nginx
-      dockerfile: Dockerfile
+  mariadb:
+    image: mariadb:11.4
+    env_file: .env
+    volumes:
+      - mariadb_volume:/var/lib/mysql
+    restart: unless-stopped
+
+  wordpress:
+    depends_on:
+      - mariadb
+    image: wordpress:6.5
+    env_file: .env
+    volumes:
+      - wordpress_volume:/var/www/wordpress
+    restart: on-failure
+
+  nginx:
+    depends_on:
+      - wordpress
+    image: nginx:1.27-alpine
     ports:
       - "80:80"
     restart: on-failure
+    # set up nginx.conf to redirec to wordpress
+    
+
+volumes:
+
+  mariadb_volume:
+    name: mariadb_data
+    driver: local
+
+  wordpress_volume:
+    name: wordpress_data
+    driver: local
+
+# version: "3.9"
+
+# services:
+
+#   #------------------------- MariaDB -------------------------
+#   mariadb:
+#     container_name: mariadb
+#     image: mariadb
+#     networks:
+#       - inception
+#     build:
+#       context: requirements/mariadb         # Dockerfile path
+#       dockerfile: Dockerfile                # Dockerfile name
+#     env_file: .env
+#     volumes:
+#       - mariadb_volume:/var/lib/mysql
+#     restart: unless-stopped
+#     expose:
+#       - "3306"
+
+#   #------------------------- WORDPRESS -------------------------
+#   wordpress:
+#     container_name: wordpress
+#     image: wordpress
+#     networks:
+#       - inception
+#     build:
+#       context: requirements/wordpress
+#       dockerfile: Dockerfile
+#     env_file: .env
+#     volumes:
+#       - wordpress_volume:/var/www/wordpress
+#     restart: on-failure
+#     depends_on:
+#       - mariadb
+#     expose:
+#       - "9000"
+
+#   #------------------------- NGINX -------------------------
+#   nginx:
+#     container_name: nginx
+#     image: nginx
+#     networks:
+#       - inception
+#     build:
+#       context: requirements/nginx
+#       dockerfile: Dockerfile
+#     env_file: .env
+#     volumes:
+#       - wordpress_volume:/var/www/wordpress
+#     restart: on-failure                     # restart in case of crash
+#     depends_on:                             # wait for wordpress to start nginx
+#       - wordpress
+#     ports:
+#       - "443:443"
+
+# #---------------------------------------------------------------------------------------------------
+
+# volumes:
+
+#   #------------------------- MARIADB VOLUME -------------------------
+#   mariadb_volume:
+#     driver: local                                   # save in local
+#     driver_opts:
+#       type: none                                    # no specific type
+#       o: bind                                       # bind mounts
+#       device: ${USER_HOME}/data/mariadb_volume      # where to save volume in local
+  
+#   #------------------------- MARIADB VOLUME -------------------------
+#   wordpress_volume:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: ${USER_HOME}/data/wordpress_volume
+
+# #---------------------------------------------------------------------------------------------------
+
+# networks:
+
+#   inception:
+#     driver: bridge
+#     name: inception_network       # allow the 3 containers to communicate
