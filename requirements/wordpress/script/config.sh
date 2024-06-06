@@ -1,4 +1,4 @@
-if [ ! -f "$PROTECT_FILE" ]; then
+# if [ ! -f "$PROTECT_FILE" ]; then
 		rm -f /var/www/wordpress/wp-config.php
 
 		wp config create	--allow-root \
@@ -24,12 +24,12 @@ if [ ! -f "$PROTECT_FILE" ]; then
 							--allow-root	\
 							--path='/var/www/wordpress'
 
-		touch $PROTECT_FILE
-fi
+# 		touch $PROTECT_FILE
+# fi
 
-#Check if /run/php exist to prevent an error from php
-if ! [ -d "/run/php" ]; then
-    mkdir /run/php
-fi
+# #Check if /run/php exist to prevent an error from php
+# if ! [ -d "/run/php" ]; then
+#     mkdir /run/php
+# fi
 
-exec php-fpm7.3 --nodaemonize
+# exec php-fpm7.3 --nodaemonize
