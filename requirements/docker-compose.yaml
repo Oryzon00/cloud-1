@@ -14,7 +14,9 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
-    image: wordpress:6.5
+    build:
+      context: wordpress/
+      dockerfile: Dockerfile
     env_file: .env
     volumes:
       - wordpress_volume:/var/www/wordpress
