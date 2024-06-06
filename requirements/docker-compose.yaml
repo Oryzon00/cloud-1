@@ -28,14 +28,14 @@ services:
       - wordpress
     image: nginx:1.27-alpine
     volumes:
-      - ./nginx/:/etc/nginx/conf.d/
+      - ./nginx/conf/:/etc/nginx/conf.d/
     networks:
       - cloud-1
     ports:
       - "80:80"
+      # - "443:443"
     restart: unless-stopped
-    # set up nginx.conf to redirec to wordpress
-    
+
 
 volumes:
 
