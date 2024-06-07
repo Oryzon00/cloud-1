@@ -41,13 +41,6 @@
         name: ubuntu
         groups: docker
         append: yes # add user to group without removing him from other group
-    
-    - name: Copy requirements folder
-      copy:
-        src: requirements
-        dest: /home/ubuntu
-        owner: ubuntu
-        group: docker
 
     - name: Add cronjob launch docker on reboot
       cron:
@@ -114,10 +107,10 @@
   hosts: myhosts
   tags: up
   tasks:
-    - name: Copy docker-compose.yaml
+    - name: Copy requirements folder
       copy:
-        src: requirements/docker-compose.yaml
-        dest: /home/ubuntu/requirements
+        src: requirements
+        dest: /home/ubuntu
         owner: ubuntu
         group: docker
     - name: docker compose up
