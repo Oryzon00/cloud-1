@@ -1,5 +1,4 @@
 services:
-
   mariadb:
     container_name: mariaDB
     image: mariadb:11.4
@@ -14,14 +13,13 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
-    image: wordpress:cli
-    command: ["wordpress/script/config.sh", "&&", "apache2-foreground"]
+    image: wordpress:6.5
     # build:
     #   context: wordpress/
     #   dockerfile: Dockerfile
     env_file: .env
     volumes:
-      - wordpress_volume:/var/www/wordpress
+      - wordpress_volume:/var/www/html
     networks:
       - cloud-1
     restart: unless-stopped
@@ -40,9 +38,7 @@ services:
       # - "443:443"
     restart: unless-stopped
 
-
 volumes:
-
   mariadb_volume:
     name: mariadb_data
     driver: local
@@ -51,9 +47,7 @@ volumes:
     name: wordpress_data
     driver: local
 
-
 networks:
-
   cloud-1:
     name: cloud-1
     driver: bridge
