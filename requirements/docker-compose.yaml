@@ -42,8 +42,7 @@ services:
     networks:
       - cloud-1
     restart: no
-    
-    user: 33:33 #???
+    # user: 33:33 #???
 
   nginx:
     container_name: nginx
