@@ -33,7 +33,6 @@ services:
     depends_on:
       wordpress:
         condition: service_healthy
-    image: wordpress_cli
     build:
       context: wordpress-cli/
       dockerfile: Dockerfile
