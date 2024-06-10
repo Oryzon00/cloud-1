@@ -49,14 +49,14 @@ services:
     depends_on:
       - wordpress
       - wordpress-cli
-    image: nginx:1.27-alpine
-    volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/
+    build:
+      context: nginx/
+      dockerfile: Dockerfile
     networks:
       - cloud-1
     ports:
       - "80:80"
-      # - "443:443"
+      - "443:443"
     restart: unless-stopped
 
 volumes:
