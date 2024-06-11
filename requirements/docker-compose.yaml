@@ -44,11 +44,22 @@ services:
     restart: no
     user: 33:33
 
+  phpmyadmin:
+    container_name: phpmyadmin
+    depends_on:
+      - mariadb
+    image: phpmyadmin:5.2
+    env_file: .env
+    networks:
+      - cloud-1
+    restart: unless-stopped
+
   nginx:
     container_name: nginx
     depends_on:
       - wordpress
       - wordpress-cli
+      - phpmyadmin
     build:
       context: nginx/
       dockerfile: Dockerfile
