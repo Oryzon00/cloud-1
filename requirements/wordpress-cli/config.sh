@@ -8,9 +8,9 @@ if  [ ! -f "$PROTECT_FILE" ]; then
 
 	wp config create	--allow-root \
 						--dbname=$MYSQL_DATABASE \
-						--dbuser=$MYSQL_USER \
-						--dbpass=$MYSQL_PASSWORD \
-						--dbhost=mariadb \
+						--dbuser=$WORDPRESS_DB_USER \
+						--dbpass=$WORDPRESS_DB_PASSWORD \
+						--dbhost=$WORDPRESS_DB_HOST \
 						--path='/var/www/html' \
 						--skip-check
 
