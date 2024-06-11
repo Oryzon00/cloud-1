@@ -8,12 +8,19 @@ services:
       - mariadb_volume:/var/lib/mysql
     networks:
       - cloud-1
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
   wordpress:
     container_name: wordpress
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     image: wordpress:6.5
     env_file: .env
     volumes:
@@ -33,6 +40,8 @@ services:
     depends_on:
       wordpress:
         condition: service_healthy
+      mariadb:
+        condition: service_healthy
     build:
       context: wordpress-cli/
       dockerfile: Dockerfile
@@ -47,7 +56,8 @@ services:
   phpmyadmin:
     container_name: phpmyadmin
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     image: phpmyadmin:5.2
     env_file: .env
     networks:
