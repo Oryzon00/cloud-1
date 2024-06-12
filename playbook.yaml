@@ -1,11 +1,3 @@
-- name: Install and set up Docker
-  hosts: myhosts
-  gather_facts: true
-  become: True
-  tags: set_up
-  roles:
-    - set_up
-
 - name: Reset state of cloud server and reboot
   hosts: myhosts
   gather_facts: true
@@ -14,14 +6,14 @@
   roles:
     - reset
     - reboot
-    
-- name: Reboot cloud instance
+
+- name: Install and set up Docker
   hosts: myhosts
-  become: true
-  gather_facts: false
-  tags: reboot
+  gather_facts: true
+  become: True
+  tags: set_up
   roles:
-    - reboot
+    - set_up
     
 - name: Check docker version
   gather_facts: false
@@ -43,6 +35,14 @@
   tags: clean
   roles:
     - clean
+
+- name: Reboot cloud instance
+  hosts: myhosts
+  become: true
+  gather_facts: false
+  tags: reboot
+  roles:
+    - reboot
 
 - name: Launch dockers
   gather_facts: false
