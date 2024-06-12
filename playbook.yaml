@@ -59,58 +59,64 @@
   tags: reset
   tasks:
 
-    - name: docker compose clean
-      community.docker.docker_compose_v2:
-        project_src: /home/ubuntu/requirements
-        state: absent
-        remove_images: all
-        remove_volumes: true
-        remove_orphans: true
-    
-    - name: Remove Docker's official GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: absent 
-      
-    - name: Remove stable repository for apt
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
-        # {{ ansible_distribution_release }} -> replace by host ubuntu release
-        state: absent
-      
-    - name: Uninstall dependencies
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl  
-          - gnupg-agent
-          - software-properties-common
-        state: absent
-        update_cache: yes
-    
-    - name: Uninstall docker
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: absent
-        update_cache: yes
-      
-    - name: Remove user ubuntu from group docker
-      user:
-        name: ubuntu
-        groups: ubuntu,adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,lxd
-        append: no
+      - block:
+          - name: docker compose clean
+            community.docker.docker_compose_v2:
+              project_src: /home/ubuntu/requirements
+              state: absent
+              remove_images: all
+              remove_volumes: true
+              remove_orphans: true
+          - name: Remove Docker's official GPG key
+            apt_key:
+              url: https://download.docker.com/linux/ubuntu/gpg
+              state: absent
 
-    - name: Remove cronjob launch docker on reboot
-      cron:
-        name: "relaunch docker if reboot"
-        state: absent
-    
-    - name: Reboot
-      reboot:
+        rescue:
+          - name: Handle failure
+            debug:
+              msg: "Error due to missing dependencies, but we'll continue"
+
+        always:
+          - name: Remove stable repository for apt
+            apt_repository:
+              repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+              # {{ ansible_distribution_release }} -> replace by host ubuntu release
+              state: absent
+            
+          - name: Uninstall dependencies
+            apt:
+              name:
+                - apt-transport-https
+                - ca-certificates
+                - curl  
+                - gnupg-agent
+                - software-properties-common
+              state: absent
+              update_cache: yes
+          
+          - name: Uninstall docker
+            apt:
+              name:
+                - docker-ce
+                - docker-ce-cli
+                - containerd.io
+              state: absent
+              update_cache: yes
+            
+          - name: Remove user ubuntu from group docker
+            user:
+              name: ubuntu
+              groups: ubuntu,adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,lxd
+              append: no
+
+          - name: Remove cronjob launch docker on reboot
+            cron:
+              name: "relaunch docker if reboot"
+              state: absent
+          
+          - name: Reboot
+            reboot:
 
 - name: Reboot cloud instance
   hosts: myhosts
