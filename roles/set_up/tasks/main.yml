@@ -35,12 +35,5 @@
     groups: docker
     append: yes
 
-- name: Add cronjob launch docker on reboot
-  cron:
-    name: "relaunch docker if reboot"
-    special_time: reboot
-    state: present
-    job: "docker compose -f /home/ubuntu/requirements/docker-compose.yaml up"
-
 - name: Trigger reconnection to apply group changes
   meta: reset_connection

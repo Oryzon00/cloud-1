@@ -5,6 +5,14 @@
     owner: ubuntu
     group: docker
 
+- name: Add cronjob to launch docker on reboot
+  become: true
+  cron:
+    name: "relaunch docker if cloud instance reboots"
+    special_time: reboot
+    state: present
+    job: "docker compose -f /home/ubuntu/requirements/docker-compose.yaml up"
+
 - name: docker compose up
   community.docker.docker_compose_v2:
     project_src: /home/ubuntu/requirements

@@ -52,7 +52,7 @@
 
     - name: Remove cronjob launch docker on reboot
       cron:
-        name: "relaunch docker if reboot"
+        name: "relaunch docker if cloud instance reboots"
         state: absent
     
     - name: Delete requirement content and folder
