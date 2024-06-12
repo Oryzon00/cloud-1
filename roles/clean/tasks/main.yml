@@ -1,0 +1,7 @@
+- name: Remove containers, images, volumes
+  community.docker.docker_compose_v2:
+    project_src: /home/ubuntu/requirements
+    state: absent
+    remove_images: all
+    remove_volumes: true
+    remove_orphans: true

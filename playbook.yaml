@@ -3,186 +3,51 @@
   gather_facts: true
   become: True
   tags: set_up
-  tasks:
-
-    - name: Install dependencies
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl  
-          - gnupg-agent
-          - software-properties-common
-        state: latest
-        update_cache: yes
-    
-    - name: Add Docker's official GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present 
-      
-    - name: Set up stable repository for apt
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
-        # {{ ansible_distribution_release }} -> replace by host ubuntu release
-        state: present
-    
-    - name: Install docker
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: latest
-        update_cache: yes
-      
-    - name: Add user ubuntu to group docker
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
-
-    - name: Add cronjob launch docker on reboot
-      cron:
-        name: "relaunch docker if reboot"
-        special_time: reboot
-        state: present
-        job: "docker compose -f /home/ubuntu/requirements/docker-compose.yaml up"
-    
-    - name: Trigger reconnection to apply group changes
-      meta: reset_connection
+  roles:
+    - set_up
 
 - name: Reset state of cloud server and reboot
   hosts: myhosts
   gather_facts: true
   become: True
   tags: reset
-  tasks:
-
-      - block:
-          - name: docker compose clean
-            community.docker.docker_compose_v2:
-              project_src: /home/ubuntu/requirements
-              state: absent
-              remove_images: all
-              remove_volumes: true
-              remove_orphans: true
-          - name: Remove Docker's official GPG key
-            apt_key:
-              url: https://download.docker.com/linux/ubuntu/gpg
-              state: absent
-
-        rescue:
-          - name: Handle failure
-            debug:
-              msg: "Error due to missing dependencies, but we'll continue"
-
-        always:
-          - name: Remove stable repository for apt
-            apt_repository:
-              repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
-              # {{ ansible_distribution_release }} -> replace by host ubuntu release
-              state: absent
-            
-          - name: Uninstall dependencies
-            apt:
-              name:
-                - apt-transport-https
-                - ca-certificates
-                - curl  
-                - gnupg-agent
-                - software-properties-common
-              state: absent
-              update_cache: yes
-          
-          - name: Uninstall docker
-            apt:
-              name:
-                - docker-ce
-                - docker-ce-cli
-                - containerd.io
-              state: absent
-              update_cache: yes
-            
-          - name: Remove user ubuntu from group docker
-            user:
-              name: ubuntu
-              groups: ubuntu,adm,dialout,cdrom,floppy,sudo,audio,dip,video,plugdev,netdev,lxd
-              append: no
-
-          - name: Remove cronjob launch docker on reboot
-            cron:
-              name: "relaunch docker if reboot"
-              state: absent
-          
-          - name: Reboot
-            reboot:
-
+  roles:
+    - reset
+    - reboot
+    
 - name: Reboot cloud instance
   hosts: myhosts
   become: true
   gather_facts: false
   tags: reboot
-  tasks:
-    - name: Reboot
-      reboot:
-
+  roles:
+    - reboot
+    
 - name: Check docker version
   gather_facts: false
   hosts: myhosts
-  tags: docker_version
-  tasks:
-    - name: Get docker version
-      shell: "docker --version"
-      register: docker_version
-    
-    - name: Output docker version
-      debug:
-        var: docker_version.stdout_lines
-    
-    - name: Get docker compose version
-      shell: "docker compose version"
-      register: docker_compose_version
-    
-    - name: Output docker version
-      debug:
-        var: docker_compose_version.stdout_lines
+  tags: version
+  roles:
+    - version
 
 - name: Down dockers
   gather_facts: false
   hosts: myhosts
   tags: down
-  tasks:
-    - name: docker compose down
-      community.docker.docker_compose_v2:
-        project_src: /home/ubuntu/requirements
-        state: absent
+  roles:
+    - down
 
 - name: Clean dockers
   gather_facts: false
   hosts: myhosts
   tags: clean
-  tasks:
-  - name: docker compose clean
-    community.docker.docker_compose_v2:
-      project_src: /home/ubuntu/requirements
-      state: absent
-      remove_images: all
-      remove_volumes: true
-      remove_orphans: true
+  roles:
+    - clean
 
 - name: Launch dockers
   gather_facts: false
   hosts: myhosts
   tags: up
-  tasks:
-    - name: Copy requirements folder
-      copy:
-        src: requirements
-        dest: /home/ubuntu
-        owner: ubuntu
-        group: docker
-    - name: docker compose up
-      community.docker.docker_compose_v2:
-        project_src: /home/ubuntu/requirements
-        state: present
+  roles:
+    - up
+  
