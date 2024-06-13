@@ -10,6 +10,5 @@ RUN		openssl req -x509 -nodes \
 			-subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=cloudaj.duckdns.org/UID=ajung"
 
 RUN		rm -f /etc/nginx/conf.d/*.conf
-COPY	conf/nginx.conf /etc/nginx/conf.d/
 
 CMD		["nginx", "-g", "daemon off;"]
