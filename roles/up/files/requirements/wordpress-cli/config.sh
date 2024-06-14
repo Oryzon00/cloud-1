@@ -7,7 +7,7 @@ if  [ ! -f "$PROTECT_FILE" ]; then
 	rm -f	/var/www/html/wp-config.php
 
 	wp config create	--allow-root \
-						--dbname=$MYSQL_DATABASE \
+						--dbname=$WORDPRESS_DB_NAME \
 						--dbuser=$WORDPRESS_DB_USER \
 						--dbpass=$WORDPRESS_DB_PASSWORD \
 						--dbhost=$WORDPRESS_DB_HOST \
@@ -22,7 +22,7 @@ if  [ ! -f "$PROTECT_FILE" ]; then
 						--skip-email \
 						--path="/var/www/html" \
 						--allow-root
-	
+
 	touch $PROTECT_FILE
 
 	echo "Wordpress configured !"
