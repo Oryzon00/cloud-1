@@ -3,7 +3,6 @@ services:
   mariadb:
     container_name: mariadb
     image: mariadb:11.4
-    env_file: .env
     volumes:
       - mariadb_volume:/var/lib/mysql
     networks:
@@ -15,6 +14,11 @@ services:
       retries: 10
       start_period: 10s
     restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
   wordpress:
     container_name: wordpress
@@ -22,7 +26,6 @@ services:
       mariadb:
         condition: service_healthy
     image: wordpress:6.5
-    env_file: .env
     volumes:
       - wordpress_volume:/var/www/html
     networks:
@@ -34,6 +37,11 @@ services:
       retries: 10
       start_period: 10s
     restart: unless-stopped
+    environment:
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
 
   wordpress-cli:
     container_name: wordpress-cli
@@ -45,13 +53,20 @@ services:
     build:
       context: wordpress-cli/
       dockerfile: Dockerfile
-    env_file: .env
     volumes:
       - wordpress_volume:/var/www/html
     networks:
       - cloud-1
     restart: no
     user: 33:33
+    environment:
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
 
   phpmyadmin:
     container_name: phpmyadmin
@@ -59,10 +74,15 @@ services:
       mariadb:
         condition: service_healthy
     image: phpmyadmin:5.2
-    env_file: .env
     networks:
       - cloud-1
     restart: unless-stopped
+    environment:
+      PMA_ARBITRARY: ${PMA_ARBITRARY}
+      PMA_HOST: ${PMA_HOST}
+      PMA_PORT: ${PMA_PORT}
+      PMA_ABSOLUTE_URI: ${PMA_ABSOLUTE_URI}
+
 
   nginx:
     container_name: nginx
